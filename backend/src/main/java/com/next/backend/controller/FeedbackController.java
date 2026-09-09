@@ -60,29 +60,36 @@ public class FeedbackController {
 
     
     @PostMapping("/{id}/reply")
-    public ResponseEntity<?> replyToFeedback(
-            @PathVariable Long id,
-            @RequestBody ReplyRequest request) {
+public ResponseEntity<?> replyToFeedback(
+        @PathVariable Long id,
+        @RequestBody ReplyRequest request) {
 
-        return feedbackRepository.findById(id)
-                .map(feedback -> {
+    return feedbackRepository.findById(id)
+            .map(feedback -> {
 
+                feedback.setReply(request.getReply());
+                feedback.setResponded(true);
+                feedbackRepository.save(feedback);
+
+                try {
                     emailService.sendReply(
                             feedback.getEmail(),
                             feedback.getName(),
                             request.getReply()
                     );
+                } catch (Exception e) {
+                    // Reply is saved either way; surface the mail failure
+                    // instead of crashing the whole request.
+                    return ResponseEntity.status(207).body(
+                        "Reply saved, but email failed to send: " + e.getMessage()
+                    );
+                }
 
-                    feedback.setReply(request.getReply());
-                    feedback.setResponded(true);
+                return ResponseEntity.ok(feedback);
 
-                    feedbackRepository.save(feedback);
-
-                    return ResponseEntity.ok(feedback);
-
-                })
-                .orElse(ResponseEntity.notFound().build());
-    }
+            })
+            .orElse(ResponseEntity.notFound().build());
+}
 
 
     
