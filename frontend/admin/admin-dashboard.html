@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>NEXT Admin Dashboard</title>
+
+    <link rel="stylesheet" href="admin.css">
+</head>
+
+<body>
+
+   
+
+    <header class="admin-navbar">
+
+        <div class="admin-logo">
+            NEXT <span>ADMIN</span>
+        </div>
+
+        <button id="logoutBtn" class="logout-btn">
+            Logout
+        </button>
+
+    </header>
+
+
+    <!-- =========================
+         MAIN DASHBOARD
+    ========================== -->
+
+    <main class="dashboard-container">
+
+        <div class="dashboard-header">
+
+            <div>
+                <h1>Feedback Dashboard</h1>
+
+                <p>
+                    Manage and respond to feedback submitted by users.
+                </p>
+            </div>
+
+        </div>
+
+
+       
+
+        <section class="stats-container">
+
+            <div class="stat-card">
+
+                <div class="stat-title">
+                    Total Feedback
+                </div>
+
+                <div id="totalFeedback" class="stat-number">
+                    0
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-title">
+                    Pending
+                </div>
+
+                <div id="pendingFeedback" class="stat-number">
+                    0
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-title">
+                    Responded
+                </div>
+
+                <div id="respondedFeedback" class="stat-number">
+                    0
+                </div>
+
+            </div>
+
+        </section>
+
+
+      
+
+        <section class="feedback-section">
+
+            <div class="section-header">
+
+                <h2>User Feedback</h2>
+
+                <button
+                    id="refreshBtn"
+                    class="refresh-btn">
+                    Refresh
+                </button>
+
+            </div>
+
+
+            <!-- Loading -->
+
+            <p id="loadingMessage" class="loading-message">
+                Loading feedback...
+            </p>
+
+
+           
+
+            <p id="errorMessage" class="error-message"></p>
+
+
+           
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>ID</th>
+
+                            <th>Name</th>
+
+                            <th>Email</th>
+
+                            <th>Rating</th>
+
+                            <th>Status</th>
+
+                            <th>Action</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="feedbackTableBody">
+
+                        
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+ 
+
+    <div id="feedbackModal" class="modal">
+
+        <div class="modal-content">
+
+            <button
+                id="closeModal"
+                class="close-modal">
+                &times;
+            </button>
+
+
+            <h2>Feedback Details</h2>
+
+
+            <div class="feedback-details">
+
+                <div class="detail-item">
+
+                    <strong>Name</strong>
+
+                    <span id="detailName"></span>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <strong>Email</strong>
+
+                    <span id="detailEmail"></span>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <strong>Rating</strong>
+
+                    <span id="detailRating"></span>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <strong>Message</strong>
+
+                    <p id="detailMessage"></p>
+
+                </div>
+
+            </div>
+
+
+          
+
+            <div class="reply-section">
+
+                <label for="replyText">
+                    Reply to User
+                </label>
+
+                <textarea
+                    id="replyText"
+                    placeholder="Write your response here..."
+                    rows="6">
+                </textarea>
+
+
+                <div class="modal-actions">
+
+                    <button
+                        id="sendReplyBtn"
+                        class="send-reply-btn">
+                        Send Reply
+                    </button>
+
+
+                    <button
+                        id="deleteFeedbackBtn"
+                        class="delete-btn">
+                        Delete
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script src="admin.js"></script>
+
+</body>
+</html>
