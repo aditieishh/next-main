@@ -1,6 +1,6 @@
 
 
-const API_URL = "http://localhost:8080/api/feedback";
+const API_URL = "https://next-main.onrender.com/api/feedback";
 
 
 

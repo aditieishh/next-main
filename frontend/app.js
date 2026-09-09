@@ -7,7 +7,7 @@ menu.addEventListener('click',function(){
 })
 
 const feedbackForm = document.getElementById("feedbackForm");
-const API_URL = "http://localhost:8080/api/feedback";
+const API_URL = "https://next-main.onrender.com/api/feedback";
 
 if (feedbackForm) {
     feedbackForm.addEventListener("submit", async function (event) {
