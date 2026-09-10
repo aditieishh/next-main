@@ -31,28 +31,34 @@ public class FeedbackController {
 
     
 
-    @PostMapping
+   
+private final Object submitLock = new Object();
+
+@PostMapping
 public ResponseEntity<?> submitFeedback(
         @RequestBody Feedback feedback) {
 
-    LocalDateTime cutoff =
-            LocalDateTime.now().minusMinutes(DUPLICATE_WINDOW_MINUTES);
+    synchronized (submitLock) {
 
-    boolean isDuplicate =
-            feedbackRepository.existsSimilarRecent(
-                    feedback.getEmail(),
-                    feedback.getMessage(),
-                    cutoff
-            );
+        LocalDateTime cutoff =
+                LocalDateTime.now().minusMinutes(DUPLICATE_WINDOW_MINUTES);
 
-    if (isDuplicate) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body("You've already submitted this feedback. Thanks!");
+        boolean isDuplicate =
+                feedbackRepository.existsSimilarRecent(
+                        feedback.getEmail(),
+                        feedback.getMessage(),
+                        cutoff
+                );
+
+        if (isDuplicate) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("You've already submitted this feedback. Thanks!");
+        }
+
+        Feedback saved = feedbackRepository.save(feedback);
+
+        return ResponseEntity.ok(saved);
     }
-
-    Feedback saved = feedbackRepository.save(feedback);
-
-    return ResponseEntity.ok(saved);
 }
 
 

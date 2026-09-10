@@ -14,6 +14,16 @@ if (feedbackForm) {
 
         event.preventDefault();
 
+        // Prevent double-clicks / accidental double submits from
+        // firing this handler more than once while a request is in flight.
+        const submitBtn = feedbackForm.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            if (submitBtn.disabled) return;
+            submitBtn.disabled = true;
+            submitBtn.dataset.originalText = submitBtn.textContent;
+            submitBtn.textContent = "Submitting...";
+        }
+
         const name = document.getElementById("feedback-name").value;
         const email = document.getElementById("feedback-email").value;
         const message = document.getElementById("feedback-message").value;
@@ -45,6 +55,12 @@ if (feedbackForm) {
                 }
             );
 
+            if (response.status === 409) {
+                alert("Looks like you've already submitted this feedback. Thanks!");
+                feedbackForm.reset();
+                return;
+            }
+
             if (!response.ok) {
                 throw new Error("Failed to submit feedback");
             }
@@ -62,6 +78,13 @@ if (feedbackForm) {
             console.error("Error submitting feedback:", error);
 
             alert("Something went wrong. Please try again.");
+
+        } finally {
+
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = submitBtn.dataset.originalText || "Submit";
+            }
         }
     });
 }
