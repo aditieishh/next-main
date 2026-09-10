@@ -4,14 +4,19 @@ import com.next.backend.entity.Feedback;
 import com.next.backend.repository.FeedbackRepository;
 import com.next.backend.service.EmailService;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/feedback")
+
 public class FeedbackController {
+    private static final long DUPLICATE_WINDOW_MINUTES = 5;
+
 
     private final FeedbackRepository feedbackRepository;
     private final EmailService emailService;
@@ -27,13 +32,28 @@ public class FeedbackController {
     
 
     @PostMapping
-    public ResponseEntity<Feedback> submitFeedback(
-            @RequestBody Feedback feedback) {
+public ResponseEntity<?> submitFeedback(
+        @RequestBody Feedback feedback) {
 
-        Feedback saved = feedbackRepository.save(feedback);
+    LocalDateTime cutoff =
+            LocalDateTime.now().minusMinutes(DUPLICATE_WINDOW_MINUTES);
 
-        return ResponseEntity.ok(saved);
+    boolean isDuplicate =
+            feedbackRepository.existsSimilarRecent(
+                    feedback.getEmail(),
+                    feedback.getMessage(),
+                    cutoff
+            );
+
+    if (isDuplicate) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body("You've already submitted this feedback. Thanks!");
     }
+
+    Feedback saved = feedbackRepository.save(feedback);
+
+    return ResponseEntity.ok(saved);
+}
 
 
     
@@ -78,8 +98,6 @@ public ResponseEntity<?> replyToFeedback(
                             request.getReply()
                     );
                 } catch (Exception e) {
-                    // Reply is saved either way; surface the mail failure
-                    // instead of crashing the whole request.
                     return ResponseEntity.status(207).body(
                         "Reply saved, but email failed to send: " + e.getMessage()
                     );
@@ -108,7 +126,7 @@ public ResponseEntity<?> replyToFeedback(
                 "Feedback deleted successfully"
         );
     }
-
+    
 
     
     public static class ReplyRequest {
