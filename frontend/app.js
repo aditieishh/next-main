@@ -14,8 +14,6 @@ if (feedbackForm) {
 
         event.preventDefault();
 
-        // Prevent double-clicks / accidental double submits from
-        // firing this handler more than once while a request is in flight.
         const submitBtn = feedbackForm.querySelector('button[type="submit"]');
         if (submitBtn) {
             if (submitBtn.disabled) return;
