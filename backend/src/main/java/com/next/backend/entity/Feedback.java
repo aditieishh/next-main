@@ -1,6 +1,7 @@
 package com.next.backend.entity;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "feedback")
@@ -24,10 +25,22 @@ public class Feedback {
     @Column(columnDefinition = "TEXT")
     private String reply;
 
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
-    // -------------------------
-    // Getters and Setters
-    // -------------------------
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
 
     public Long getId() {
         return id;
