@@ -13,10 +13,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/feedback")
-
 public class FeedbackController {
-    private static final long DUPLICATE_WINDOW_MINUTES = 5;
 
+    
+    private static final long DUPLICATE_WINDOW_MINUTES = 5;
 
     private final FeedbackRepository feedbackRepository;
     private final EmailService emailService;
@@ -29,40 +29,37 @@ public class FeedbackController {
         this.emailService = emailService;
     }
 
-    
-
    
-private final Object submitLock = new Object();
+    private final Object submitLock = new Object();
 
-@PostMapping
-public ResponseEntity<?> submitFeedback(
-        @RequestBody Feedback feedback) {
+    @PostMapping
+    public ResponseEntity<?> submitFeedback(
+            @RequestBody Feedback feedback) {
 
-    synchronized (submitLock) {
+        synchronized (submitLock) {
 
-        LocalDateTime cutoff =
-                LocalDateTime.now().minusMinutes(DUPLICATE_WINDOW_MINUTES);
+            LocalDateTime cutoff =
+                    LocalDateTime.now().minusMinutes(DUPLICATE_WINDOW_MINUTES);
 
-        boolean isDuplicate =
-                feedbackRepository.existsSimilarRecent(
-                        feedback.getEmail(),
-                        feedback.getMessage(),
-                        cutoff
-                );
+            boolean isDuplicate =
+                    feedbackRepository.existsSimilarRecent(
+                            feedback.getEmail(),
+                            feedback.getMessage(),
+                            cutoff
+                    );
 
-        if (isDuplicate) {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body("You've already submitted this feedback. Thanks!");
+            if (isDuplicate) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body("You've already submitted this feedback. Thanks!");
+            }
+
+            Feedback saved = feedbackRepository.save(feedback);
+
+            return ResponseEntity.ok(saved);
         }
-
-        Feedback saved = feedbackRepository.save(feedback);
-
-        return ResponseEntity.ok(saved);
     }
-}
 
 
-    
     @GetMapping
     public ResponseEntity<List<Feedback>> getAllFeedback() {
 
@@ -71,8 +68,6 @@ public ResponseEntity<?> submitFeedback(
         );
     }
 
-
-   
 
     @GetMapping("/{id}")
     public ResponseEntity<Feedback> getFeedback(
@@ -84,39 +79,31 @@ public ResponseEntity<?> submitFeedback(
     }
 
 
-    
     @PostMapping("/{id}/reply")
-public ResponseEntity<?> replyToFeedback(
-        @PathVariable Long id,
-        @RequestBody ReplyRequest request) {
+    public ResponseEntity<?> replyToFeedback(
+            @PathVariable Long id,
+            @RequestBody ReplyRequest request) {
 
-    return feedbackRepository.findById(id)
-            .map(feedback -> {
+        return feedbackRepository.findById(id)
+                .map(feedback -> {
 
-                feedback.setReply(request.getReply());
-                feedback.setResponded(true);
-                feedbackRepository.save(feedback);
+                    feedback.setReply(request.getReply());
+                    feedback.setResponded(true);
+                    feedbackRepository.save(feedback);
 
-                try {
+                    
                     emailService.sendReply(
                             feedback.getEmail(),
                             feedback.getName(),
                             request.getReply()
                     );
-                } catch (Exception e) {
-                    return ResponseEntity.status(207).body(
-                        "Reply saved, but email failed to send: " + e.getMessage()
-                    );
-                }
 
-                return ResponseEntity.ok(feedback);
+                    return ResponseEntity.ok(feedback);
 
-            })
-            .orElse(ResponseEntity.notFound().build());
-}
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
 
-
-    
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteFeedback(
@@ -132,9 +119,8 @@ public ResponseEntity<?> replyToFeedback(
                 "Feedback deleted successfully"
         );
     }
-    
 
-    
+
     public static class ReplyRequest {
 
         private String reply;

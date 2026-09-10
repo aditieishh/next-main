@@ -41,7 +41,6 @@ public class Feedback {
         this.createdAt = createdAt;
     }
 
-
     public Long getId() {
         return id;
     }
@@ -49,7 +48,6 @@ public class Feedback {
     public void setId(Long id) {
         this.id = id;
     }
-
 
     public String getName() {
         return name;
@@ -59,7 +57,6 @@ public class Feedback {
         this.name = name;
     }
 
-
     public String getEmail() {
         return email;
     }
@@ -67,7 +64,6 @@ public class Feedback {
     public void setEmail(String email) {
         this.email = email;
     }
-
 
     public String getMessage() {
         return message;
@@ -77,7 +73,6 @@ public class Feedback {
         this.message = message;
     }
 
-
     public Integer getRating() {
         return rating;
     }
@@ -86,7 +81,6 @@ public class Feedback {
         this.rating = rating;
     }
 
-
     public boolean isResponded() {
         return responded;
     }
@@ -94,7 +88,6 @@ public class Feedback {
     public void setResponded(boolean responded) {
         this.responded = responded;
     }
-
 
     public String getReply() {
         return reply;
